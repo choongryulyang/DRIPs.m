@@ -2,7 +2,7 @@
 
 Replication codes for Afrouzi and Yang (2019): "Dynamic Multivariate Rational Inattention".
 
-Click here to download all files as a zip. Note: **major update** on September 13, 2019.
+Click here to download all files as a zip. Note: **major update** on September 16, 2019.
 
 ## Resources
 * Paper
