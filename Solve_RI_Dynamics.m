@@ -24,18 +24,15 @@ function [Sigma1,Sigma_p,Lambda,Omega0,Y,Sigma_z,K,X] = ...
     err     = 1 ;
     iter    = 0 ;
     
+	SqRSigma    = sqrtm(Sigma0);
     
     % Loop
     while err > tol_err
-        SqRSigma    = sqrtm(Sigma0);
-        invSqRSigma = pinv(SqRSigma);
-        S_Om_S  = SqRSigma*Omega0*SqRSigma ;
+		
+		S_Om_S  = SqRSigma*Omega0*SqRSigma ;
+		
         [U,D] = eig(S_Om_S) ;
 
-        % Add this line since sometimes an eigenvalue is very close to zero
-        % (but not zero) so that it generates an implausible psudo-inverse 
-        % matrix. It's problematic since it makes "imaginary" elements in
-        % posterior covariance matrix
         %D = diag((abs(diag(D))>1e-8).*diag(D)) ;
         
         Lambda      = U*max(phi*I - D,0)*U'; 
@@ -46,8 +43,11 @@ function [Sigma1,Sigma_p,Lambda,Omega0,Y,Sigma_z,K,X] = ...
 
         Sigma0      = w*Sigma1 + (1-w)*Sigma0 ;
         
+        SqRSigma    = sqrtm(Sigma0);
+        invSqRSigma = pinv(SqRSigma);
+        
         Omega0      = Omega_c + beta*A'*invSqRSigma*(phi*I - Lambda) ... 
-            *invSqRSigma*A   ;
+					  *invSqRSigma*A   ;
         
         iter        = iter + 1;
     end
