@@ -1,6 +1,6 @@
-# Dynamic Multidimensional Rational Inattention
+# Dynamic Rational Inattention
 
-Replication codes for Afrouzi and Yang (2019): "Dynamic Rational Inattention and the Phillips Curve".
+Afrouzi and Yang (2019): "Dynamic Rational Inattention and the Phillips Curve".
 
 Note: **major update** on October 7, 2019.
 
