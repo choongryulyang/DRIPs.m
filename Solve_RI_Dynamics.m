@@ -1,6 +1,6 @@
 %% Afrouzi and Yang (2019)
 
-%% Inputs 
+%% Inputs
 % omega     : Cost of information
 % beta	    : Discount factor
 % A 	    : x=Ax+Qu
