@@ -1,5 +1,15 @@
-% Afrouzi and Yang (2019)
+%% Afrouzi and Yang (2019)
 
+%% Inputs 
+% omega     : Cost of information
+% beta	    : Discount factor
+% A 	    : x=Ax+Qu
+% Q 	    : x=Ax+Qu
+% H	    : v=-0.5(a'-x'H)(a-H'x)
+% Omega_init: Initial guess for benefit matrix Omega
+% Sigma_init: Initial guess for prior covariance matrix 
+
+%% Outputs
 % Sigma_1   : Steady-state Prior uncertainty
 % Sigma_p   : Steady-state posterior uncertainty
 % Lambda    : Shadow matrix on the no-forgetting constriant -- Lambda*(Sigma-Sigma_p) = 0 
@@ -7,6 +17,8 @@
 % Y         : Weight vector for evolution of actions
 % Sigma_z   : Covariance matrix of the rational inattention error
 % K	    : Kalman gain matrix
+
+
 
 function [Sigma1,Sigma_p,Lambda,Omega0,Y,Sigma_z,K] = ...
                     Solve_RI_Dynamics(omega,beta,A,Q,H,Omega_init,Sigma_init) 
