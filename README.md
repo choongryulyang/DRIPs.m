@@ -10,3 +10,4 @@ Click here to download all files as a zip. Note: **major update** on September 1
 
 ## Codes
 * [Solve_RI_Dynamics.m](Solve_RI_Dynamics.m) - A solver for **a dynamic multidimensional rational inattention** problem
+* [Solve_RI_Dynamics_SignalBase.m](Solve_RI_Dynamics_SignalBase.m) - A solver for **a dynamic multidimensional rational inattention** problem
