@@ -9,7 +9,7 @@
 % K	    : Kalman gain matrix
 
 function [Sigma1,Sigma_p,Lambda,Omega0,Y,Sigma_z,K] = ...
-                    Solve_RI_Dynamics(phi,beta,A,Q,H,Omega_init,Sigma_init) 
+                    Solve_RI_Dynamics(omega,beta,A,Q,H,Omega_init,Sigma_init) 
 
     tol_err = 1e-8      ;   % tolerance level
     w       = 0.1       ;   % update weight
@@ -37,8 +37,8 @@ function [Sigma1,Sigma_p,Lambda,Omega0,Y,Sigma_z,K] = ...
         U = (abs(U)>1e-10).*U ;
 
         
-        Lambda      = U*max(phi*I - D,0)*U'; 
-        Sigma_p     = phi*SqRSigma*U/(max(D,phi*I))*U'*SqRSigma;
+        Lambda      = U*max(omega*I - D,0)*U'; 
+        Sigma_p     = omega*SqRSigma*U/(max(D,omega*I))*U'*SqRSigma;
     
         Sigma1      = A*Sigma_p*A' + Q*Q' ;
         err         = norm(Sigma1 - Sigma0,'fro')/sqrt(n);
@@ -48,7 +48,7 @@ function [Sigma1,Sigma_p,Lambda,Omega0,Y,Sigma_z,K] = ...
         SqRSigma    = sqrtm(Sigma0);
         invSqRSigma = pinv(SqRSigma);
         
-        Omega0      = Omega_c + beta*A'*invSqRSigma*(phi*I - Lambda) ... 
+        Omega0      = Omega_c + beta*A'*invSqRSigma*(omega*I - Lambda) ... 
 					  *invSqRSigma*A   ;
 
         SqRSigma = (abs(SqRSigma)>1e-10).*SqRSigma ;
