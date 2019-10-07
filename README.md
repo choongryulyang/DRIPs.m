@@ -2,7 +2,7 @@
 
 Replication codes for Afrouzi and Yang (2019): "Dynamic Rational Inattention and the Phillips Curve".
 
-Click here to download all files as a zip. Note: **major update** on September 16, 2019.
+Note: **major update** on October 7, 2019.
 
 ## Resources
 * Paper
