@@ -10,7 +10,7 @@ function [Sigma1,Sigma_p,Lambda,Omega0,Y,Sigma_z,K] = ...
                     Solve_RI_Dynamics(phi,beta,A,Q,H,Omega_init,Sigma_init) 
 
     tol_err = 1e-8      ;   % tolerance level
-%     w       = 0.5       ;   % update weight
+    w       = 0.1       ;   % update weight
 
     Omega_c = H*H'      ;
     
@@ -41,7 +41,6 @@ function [Sigma1,Sigma_p,Lambda,Omega0,Y,Sigma_z,K] = ...
         Sigma1      = A*Sigma_p*A' + Q*Q' ;
         err         = norm(Sigma1 - Sigma0,'fro')/sqrt(n);
 
-        w           = 0.1;
         Sigma0      = w*Sigma1 + (1-w)*Sigma0 ;
         
         SqRSigma    = sqrtm(Sigma0);
