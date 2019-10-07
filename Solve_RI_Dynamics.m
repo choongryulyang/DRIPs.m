@@ -1,10 +1,12 @@
+% Afrouzi and Yang (2019)
 
 % Sigma_1   : Steady-state Prior uncertainty
 % Sigma_p   : Steady-state posterior uncertainty
-% Lambda    : Lambda*(Sigma-Sigma_p) = 0
-% Omega     : Forward looking component of the FOC
+% Lambda    : Shadow matrix on the no-forgetting constriant -- Lambda*(Sigma-Sigma_p) = 0 
+% Omega     : Dynamic benefit matrix 
 % Y         : Weight vector for evolution of actions
 % Sigma_z   : Covariance matrix of the rational inattention error
+% K	    : Kalman gain matrix
 
 function [Sigma1,Sigma_p,Lambda,Omega0,Y,Sigma_z,K] = ...
                     Solve_RI_Dynamics(phi,beta,A,Q,H,Omega_init,Sigma_init) 
