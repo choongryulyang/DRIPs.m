@@ -10,5 +10,5 @@ Note: **major update** on October 7, 2019.
 
 ## Codes
 * [Solve_RI_Dynamics.m](Solve_RI_Dynamics.m) - A Matlab solver for **a dynamic multidimensional rational inattention** problem
-* [Solve_RI_Dynamics.ji](Solve_RI_Dynamics.ji) - A Julia solver for **a dynamic multidimensional rational inattention** problem
+* [Solve_RI_Dynamics.jl](Solve_RI_Dynamics.jl) - A Julia solver for **a dynamic multidimensional rational inattention** problem
 
