@@ -2,25 +2,26 @@
 ## This code solves for the steady state of the dynamic 
 ## multivariate rational inattention problem in LQG setting.
 ##
-## Julia code written by Miguel Acosta / Modified (possibly made worse) by Hassan Afrouzi
+## Julia code written by Miguel Acosta / Modified (and possibly made worse) by Hassan Afrouzi
 
-## Inputs
-# ω         : Cost of information
-# β     : Discount factor
-# A         : x=Ax+Qu
-# Q         : x=Ax+Qu
-# H     : v=-0.5(a'-x'H)(a-H'x)
-# Ωguess    : Initial guess for benefit matrix Ω
-# Σguess    : Initial guess for prior covariance matrix 
+## main function: Solve_RI_Dynamics
+    ## Inputs
+    # ω         : Cost of information
+    # β         : Discount factor
+    # A         : x=Ax+Qu
+    # Q         : x=Ax+Qu
+    # H         : v=-0.5(a'-x'H)(a-H'x)
+    # Ωguess    : Initial guess for benefit matrix Ω (optional)
+    # Σguess    : Initial guess for prior covariance matrix (optional)
 
-## Outputs
-# Σ_1       : Steady-state Prior uncertainty
-# Σ_p       : Steady-state posterior uncertainty
-# Λ         : Shadow matrix on the no-forgetting constriant -- Λ*(Σ-Σ_p) = 0 
-# Ω         : Dynamic benefit matrix 
-# Y         : Weight vector for evolution of actions
-# Σ_z       : Covariance matrix of the rational inattention error
-# K     : Kalman gain matrix
+    ## Outputs
+    # Σ_1       : Steady-state Prior uncertainty
+    # Σ_p       : Steady-state posterior uncertainty
+    # Λ         : Shadow matrix on the no-forgetting constriant -- Λ*(Σ-Σ_p) = 0 
+    # Ω         : Dynamic benefit matrix 
+    # Y         : Weight vector for evolution of actions
+    # Σ_z       : Covariance matrix of the rational inattention error
+    # K         : Kalman gain matrix
 
 
 using LinearAlgebra
@@ -29,21 +30,6 @@ struct drip
     ω; β; A; Q; H;          #Primitives
     K; Y; Σ_z; Σ_p; Σ_1; Ω; #Solution
 end
-
-struct drip_init
-    Σ::Array{Float64}
-    Ω::Array{Float64}
-end
-
-# struct dripout
-#     P::dripin
-#     K    
-#     Y     
-#     Σ_z   
-#     Σ_p
-#     Σ_1
-#     Ω
-# end
 
 struct dripirfs
     T::Int
