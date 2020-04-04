@@ -2,7 +2,7 @@
 ## This code solves for the steady state of the dynamic 
 ## multivariate rational inattention problem in LQG setting.
 ##
-## Julia code written by Miguel Acosta
+## Julia code written by Miguel Acosta / Modified (possibly made worse) by Hassan Afrouzi
 
 ## Inputs
 # ω         : Cost of information
@@ -52,9 +52,6 @@ struct dripirfs
     a::Array{Float64}
 end
 
-
-
-#function Solve_RI_Dynamics(ω::Float64,β::Float64::,A::Array{Float64},Q::Array{Float64},H::Array{Float64},g::drip_init)
 function Solve_RI_Dynamics(ω,β,A,Q,H;Ω0=H*H',Σ0=Q*Q')
     tol_err = 1e-8       # tolerance level
     w       = 0.1        # update weight
