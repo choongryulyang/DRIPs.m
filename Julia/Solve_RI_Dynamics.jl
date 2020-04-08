@@ -2,33 +2,36 @@
 ## This code solves for the steady state of the dynamic 
 ## multivariate rational inattention problem in LQG setting.
 ##
-## Julia code written by Miguel Acosta / Modified (and possibly made worse) by Hassan Afrouzi
+## Julia code written by Miguel Acosta / Modified by Hassan Afrouzi
 
-## main function: Solve_RI_Dynamics
-    ## Inputs
-    # ω         : Cost of information
-    # β         : Discount factor
-    # A         : x=Ax+Qu
-    # Q         : x=Ax+Qu
-    # H         : v=-0.5(a'-x'H)(a-H'x)
-    # Ωguess    : Initial guess for benefit matrix Ω (optional)
-    # Σguess    : Initial guess for prior covariance matrix (optional)
+## Inputs
+# ω         : Cost of information
+# β     : Discount factor
+# A         : x=Ax+Qu
+# Q         : x=Ax+Qu
+# H     : v=-0.5(a'-x'H)(a-H'x)
+# Ωguess    : Initial guess for benefit matrix Ω
+# Σguess    : Initial guess for prior covariance matrix 
 
-    ## Outputs
-    # Σ_1       : Steady-state Prior uncertainty
-    # Σ_p       : Steady-state posterior uncertainty
-    # Λ         : Shadow matrix on the no-forgetting constriant -- Λ*(Σ-Σ_p) = 0 
-    # Ω         : Dynamic benefit matrix 
-    # Y         : Weight vector for evolution of actions
-    # Σ_z       : Covariance matrix of the rational inattention error
-    # K         : Kalman gain matrix
-
+## Outputs
+# Σ_1       : Steady-state Prior uncertainty
+# Σ_p       : Steady-state posterior uncertainty
+# Λ         : Shadow matrix on the no-forgetting constriant -- Λ*(Σ-Σ_p) = 0 
+# Ω         : Dynamic benefit matrix 
+# Y         : Weight vector for evolution of actions
+# Σ_z       : Covariance matrix of the rational inattention error
+# K     : Kalman gain matrix
 
 using LinearAlgebra
 
 struct drip
     ω; β; A; Q; H;          #Primitives
     K; Y; Σ_z; Σ_p; Σ_1; Ω; #Solution
+end
+
+struct drip_init
+    Σ::Array{Float64}
+    Ω::Array{Float64}
 end
 
 struct dripirfs
@@ -38,7 +41,8 @@ struct dripirfs
     a::Array{Float64}
 end
 
-function Solve_RI_Dynamics(ω,β,A,Q,H;Ω0=H*H',Σ0=Q*Q')
+ 
+function Solve_RI_Dynamics(ω,β,A,Q,H;Ω0=H*H',Σ0=A*A'+Q*Q')
     tol_err = 1e-8       # tolerance level
     w       = 0.1        # update weight
     maxit   = 10000
@@ -79,7 +83,7 @@ function Solve_RI_Dynamics(ω,β,A,Q,H;Ω0=H*H',Σ0=Q*Q')
         SqRΣ    = sqrt(Σ0);
         invSqRΣ = pinv(SqRΣ);
         
-        Ω0      = Ω_c + β*A'*invSqRΣ*(ω*eye - Λ)*invSqRΣ*A
+        Ω0      = w*(Ω_c + β*A'*invSqRΣ*(ω*eye - Λ)*invSqRΣ*A)+(1-w)*Ω0;
 
         SqRΣ = (abs.(SqRΣ).>1e-10).*SqRΣ + diagm(abs.(diag(SqRΣ)).<=1e-10)*1e-8
         Ω0   = (abs.(Ω0).>1e-10).*Ω0     + diagm(abs.(diag(Ω0)).<=1e-10)*1e-8
@@ -91,7 +95,7 @@ function Solve_RI_Dynamics(ω,β,A,Q,H;Ω0=H*H',Σ0=Q*Q')
         print("RI Code hit maxit\n")
     end
 
-    #Σ1      = (abs.(Σ1).>1e-10).*Σ1 + diagm(abs.(diag(Σ1)).<=1e-10)*1e-8
+    Σ1      = (abs.(Σ1).>1e-10).*Σ1 + diagm(abs.(diag(Σ1)).<=1e-10)*1e-8
     inv_Σ1  = pinv(Σ1) ;
     Y = (eye - Σ_p*inv_Σ1)'*H ; 
     Σ_z = H'*(Σ_p - Σ_p*inv_Σ1*Σ_p)*H ;
@@ -102,14 +106,13 @@ function Solve_RI_Dynamics(ω,β,A,Q,H;Ω0=H*H',Σ0=Q*Q')
 end
 
 
+
 ########## Aux. Functions ############
 function getreal(M)
     if maximum(abs.(imag.(M))) < 1e-10
         return(real.(M))
     else
         print("Your matrix has complex stuff")
-        display(M)
-        return(M)
     end
 end
 
@@ -123,9 +126,6 @@ function infinitesum(func; tol = 1e-8,maxit = 1000,start=0)
         infsum += func_it
         diff = maximum(func_it)
         it += 1
-    end
-    if it == maxit
-        print("sum didn't vconverge\n")
     end
     return(infsum)
 end
@@ -151,3 +151,5 @@ function dripirfs(P::drip,T::Int)
     end
     return(dripirfs(T,x,x_hat,a))
 end
+
+
