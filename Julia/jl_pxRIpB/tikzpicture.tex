@@ -1,0 +1,214 @@
+\documentclass[tikz]{standalone}
+\usepackage{pgfplots}
+\pgfplotsset{compat=newest}
+\pgfplotsset{every axis legend/.append style={%
+cells={anchor=west}}
+}
+\usetikzlibrary{arrows}
+\tikzset{>=stealth'}
+
+\begin{document}
+\begin{tikzpicture}[]
+\begin{axis}[height = {93.98mm}, legend pos = {north east}, ylabel = {}, xmin = {1}, xmax = {20}, ymax = {0.1030194477851762}, xlabel = {}, unbounded coords=jump,scaled x ticks = false,xlabel style = {font = {\fontsize{11 pt}{14.3 pt}\selectfont}, color = {rgb,1:red,0.00000000;green,0.00000000;blue,0.00000000}, draw opacity = 1.0, rotate = 0.0},xmajorgrids = true,xtick = {5.0,10.0,15.0,20.0},xticklabels = {$5$,$10$,$15$,$20$},xtick align = inside,xticklabel style = {font = {\fontsize{12 pt}{15.600000000000001 pt}\selectfont}, color = {rgb,1:red,0.00000000;green,0.00000000;blue,0.00000000}, draw opacity = 1.0, rotate = 0.0},x grid style = {color = {rgb,1:red,0.00000000;green,0.00000000;blue,0.00000000},
+draw opacity = 0.1,
+line width = 0.5,
+solid},x axis line style = {color = {rgb,1:red,0.00000000;green,0.00000000;blue,0.00000000},
+draw opacity = 1.0,
+line width = 1,
+solid},scaled y ticks = false,ylabel style = {font = {\fontsize{11 pt}{14.3 pt}\selectfont}, color = {rgb,1:red,0.00000000;green,0.00000000;blue,0.00000000}, draw opacity = 1.0, rotate = 0.0},ymajorgrids = true,ytick = {0.0,0.025,0.05,0.07500000000000001,0.1},yticklabels = {$0.000$,$0.025$,$0.050$,$0.075$,$0.100$},ytick align = inside,yticklabel style = {font = {\fontsize{12 pt}{15.600000000000001 pt}\selectfont}, color = {rgb,1:red,0.00000000;green,0.00000000;blue,0.00000000}, draw opacity = 1.0, rotate = 0.0},y grid style = {color = {rgb,1:red,0.00000000;green,0.00000000;blue,0.00000000},
+draw opacity = 0.1,
+line width = 0.5,
+solid},y axis line style = {color = {rgb,1:red,0.00000000;green,0.00000000;blue,0.00000000},
+draw opacity = 1.0,
+line width = 1,
+solid},    xshift = 0.0mm,
+    yshift = 0.0mm,
+    axis background/.style={fill={rgb,1:red,1.00000000;green,1.00000000;blue,1.00000000}}
+,legend style = {color = {rgb,1:red,0.00000000;green,0.00000000;blue,0.00000000},
+draw opacity = 1.0,
+line width = 1,
+solid,fill = {rgb,1:red,1.00000000;green,1.00000000;blue,1.00000000},fill opacity = 1.0,text opacity = 1.0,font = {\fontsize{12 pt}{15.600000000000001 pt}\selectfont}},colorbar style={title=}, ymin = {-0.003667707291049299}, width = {115.99333333333334mm}]\addplot+ [color = {rgb,1:red,0.00000000;green,0.60560316;blue,0.97868012},
+draw opacity = 1.0,
+line width = 3,
+solid,mark = none,
+mark size = 2.0,
+mark options = {
+            color = {rgb,1:red,0.00000000;green,0.00000000;blue,0.00000000}, draw opacity = 1.0,
+            fill = {rgb,1:red,0.00000000;green,0.60560316;blue,0.97868012}, fill opacity = 1.0,
+            line width = 1,
+            rotate = 0,
+            solid
+        }]coordinates {
+(1.0, 0.1)
+(2.0, 0.06)
+(3.0, 0.036)
+(4.0, 0.021599999999999998)
+(5.0, 0.01296)
+(6.0, 0.007775999999999998)
+(7.0, 0.004665599999999999)
+(8.0, 0.0027993599999999994)
+(9.0, 0.0016796159999999994)
+(10.0, 0.0010077695999999997)
+(11.0, 0.0006046617599999998)
+(12.0, 0.0003627970559999999)
+(13.0, 0.00021767823359999992)
+(14.0, 0.00013060694015999994)
+(15.0, 7.836416409599996e-5)
+(16.0, 4.701849845759997e-5)
+(17.0, 2.8211099074559986e-5)
+(18.0, 1.692665944473599e-5)
+(19.0, 1.0155995666841594e-5)
+(20.0, 6.093597400104956e-6)
+(21.0, 3.6561584400629733e-6)
+(22.0, 2.193695064037784e-6)
+(23.0, 1.3162170384226705e-6)
+(24.0, 7.897302230536021e-7)
+(25.0, 4.738381338321613e-7)
+(26.0, 2.8430288029929675e-7)
+(27.0, 1.7058172817957806e-7)
+(28.0, 1.0234903690774684e-7)
+(29.0, 6.14094221446481e-8)
+(30.0, 3.6845653286788855e-8)
+(31.0, 2.2107391972073314e-8)
+(32.0, 1.3264435183243988e-8)
+(33.0, 7.958661109946392e-9)
+(34.0, 4.7751966659678346e-9)
+(35.0, 2.865117999580701e-9)
+(36.0, 1.7190707997484204e-9)
+(37.0, 1.0314424798490521e-9)
+(38.0, 6.188654879094313e-10)
+(39.0, 3.713192927456588e-10)
+(40.0, 2.2279157564739526e-10)
+};
+\addlegendentry{Agg. Demand Growth ($\Delta q$)}
+\addplot+ [color = {rgb,1:red,0.88887350;green,0.43564919;blue,0.27812294},
+draw opacity = 1.0,
+line width = 3,
+solid,mark = none,
+mark size = 2.0,
+mark options = {
+            color = {rgb,1:red,0.00000000;green,0.00000000;blue,0.00000000}, draw opacity = 1.0,
+            fill = {rgb,1:red,0.88887350;green,0.43564919;blue,0.27812294}, fill opacity = 1.0,
+            line width = 1,
+            rotate = 0,
+            solid
+        }]coordinates {
+(1.0, 0.03167952249599845)
+(2.0, 0.03624854287747478)
+(3.0, 0.03669079472786907)
+(4.0, 0.03427836021966765)
+(5.0, 0.030094394174549677)
+(6.0, 0.02502487733324607)
+(7.0, 0.019755651053124323)
+(8.0, 0.014778888409105101)
+(9.0, 0.010409863967199423)
+(10.0, 0.006812365267650888)
+(11.0, 0.004029621865129757)
+(12.0, 0.002017157775038053)
+(13.0, 0.0006742683017168516)
+(14.0, -0.00012843551192670555)
+(15.0, -0.0005269947176128054)
+(16.0, -0.0006482595058731055)
+(17.0, -0.000599993840742441)
+(18.0, -0.00046623782633681277)
+(19.0, -0.0003067454256810431)
+(20.0, -0.00015929227507199828)
+(21.0, -4.366553388801542e-5)
+(22.0, 3.3695471555489354e-5)
+(23.0, 7.514562469404518e-5)
+(24.0, 8.790404485750636e-5)
+(25.0, 8.098457146446525e-5)
+(26.0, 6.308779859504066e-5)
+(27.0, 4.1347423600679445e-5)
+(28.0, 2.081040078277807e-5)
+(29.0, 4.42554706514553e-6)
+(30.0, -6.634182283471457e-6)
+(31.0, -1.2502814912551674e-5)
+(32.0, -1.4113671220700175e-5)
+(33.0, -1.2761199650129784e-5)
+(34.0, -9.761406843278309e-6)
+(35.0, -6.231728957029059e-6)
+(36.0, -2.9831632476495784e-6)
+(37.0, -4.949705348089584e-7)
+(38.0, 1.0470399093853722e-6)
+(39.0, 1.6843673551480975e-6)
+(40.0, 1.6055030438444362e-6)
+};
+\addlegendentry{Inflation ($\pi$)}
+\end{axis}
+\begin{axis}[height = {93.98mm}, legend pos = {north east}, ylabel = {}, xmin = {1}, xmax = {20}, ymax = {0.09491871743986767}, xlabel = {}, unbounded coords=jump,scaled x ticks = false,xlabel style = {font = {\fontsize{11 pt}{14.3 pt}\selectfont}, color = {rgb,1:red,0.00000000;green,0.00000000;blue,0.00000000}, draw opacity = 1.0, rotate = 0.0},xmajorgrids = true,xtick = {5.0,10.0,15.0,20.0},xticklabels = {$5$,$10$,$15$,$20$},xtick align = inside,xticklabel style = {font = {\fontsize{12 pt}{15.600000000000001 pt}\selectfont}, color = {rgb,1:red,0.00000000;green,0.00000000;blue,0.00000000}, draw opacity = 1.0, rotate = 0.0},x grid style = {color = {rgb,1:red,0.00000000;green,0.00000000;blue,0.00000000},
+draw opacity = 0.1,
+line width = 0.5,
+solid},x axis line style = {color = {rgb,1:red,0.00000000;green,0.00000000;blue,0.00000000},
+draw opacity = 1.0,
+line width = 1,
+solid},scaled y ticks = false,ylabel style = {font = {\fontsize{11 pt}{14.3 pt}\selectfont}, color = {rgb,1:red,0.00000000;green,0.00000000;blue,0.00000000}, draw opacity = 1.0, rotate = 0.0},ymajorgrids = true,ytick = {0.0,0.02,0.04,0.06,0.08},yticklabels = {$0.00$,$0.02$,$0.04$,$0.06$,$0.08$},ytick align = inside,yticklabel style = {font = {\fontsize{12 pt}{15.600000000000001 pt}\selectfont}, color = {rgb,1:red,0.00000000;green,0.00000000;blue,0.00000000}, draw opacity = 1.0, rotate = 0.0},y grid style = {color = {rgb,1:red,0.00000000;green,0.00000000;blue,0.00000000},
+draw opacity = 0.1,
+line width = 0.5,
+solid},y axis line style = {color = {rgb,1:red,0.00000000;green,0.00000000;blue,0.00000000},
+draw opacity = 1.0,
+line width = 1,
+solid},    xshift = 115.99333333333334mm,
+    yshift = 0.0mm,
+    axis background/.style={fill={rgb,1:red,1.00000000;green,1.00000000;blue,1.00000000}}
+,legend style = {color = {rgb,1:red,0.00000000;green,0.00000000;blue,0.00000000},
+draw opacity = 1.0,
+line width = 1,
+solid,fill = {rgb,1:red,1.00000000;green,1.00000000;blue,1.00000000},fill opacity = 1.0,text opacity = 1.0,font = {\fontsize{12 pt}{15.600000000000001 pt}\selectfont}},colorbar style={title=}, ymin = {-0.0056676086315110095}, width = {112.60666666666667mm}]\addplot+ [color = {rgb,1:red,0.00000000;green,0.60560316;blue,0.97868012},
+draw opacity = 1.0,
+line width = 3,
+solid,mark = none,
+mark size = 2.0,
+mark options = {
+            color = {rgb,1:red,0.00000000;green,0.00000000;blue,0.00000000}, draw opacity = 1.0,
+            fill = {rgb,1:red,0.00000000;green,0.60560316;blue,0.97868012}, fill opacity = 1.0,
+            line width = 1,
+            rotate = 0,
+            solid
+        }]coordinates {
+(1.0, 0.06832047750400155)
+(2.0, 0.09207193462652677)
+(3.0, 0.0913811398986577)
+(4.0, 0.07870277967899005)
+(5.0, 0.06156838550444037)
+(6.0, 0.044319508171194295)
+(7.0, 0.02922945711806997)
+(8.0, 0.01724992870896487)
+(9.0, 0.008519680741765448)
+(10.0, 0.002715085074114559)
+(11.0, -0.0007098750310151961)
+(12.0, -0.0023642357500532514)
+(13.0, -0.002820825818170103)
+(14.0, -0.0025617833660833977)
+(15.0, -0.001956424484374592)
+(16.0, -0.0012611464800438867)
+(17.0, -0.0006329415402268857)
+(18.0, -0.00014977705444533694)
+(19.0, 0.00016712436690254767)
+(20.0, 0.0003325102393746508)
+(21.0, 0.0003798319317027292)
+(22.0, 0.00034833015521127763)
+(23.0, 0.00027450074755565513)
+(24.0, 0.00018738643292120236)
+(25.0, 0.00010687569959056927)
+(26.0, 4.40722038758279e-5)
+(27.0, 2.8953620033280217e-6)
+(28.0, -1.7812689742542295e-5)
+(29.0, -2.2176827385543175e-5)
+(30.0, -1.550579944878493e-5)
+(31.0, -2.9808771442611824e-6)
+(32.0, 1.1146058511622235e-5)
+(33.0, 2.3915216822861966e-5)
+(34.0, 3.3681398862806246e-5)
+(35.0, 3.9915992937834886e-5)
+(36.0, 4.290087525628421e-5)
+(37.0, 4.3396877233573016e-5)
+(38.0, 4.235045618967555e-5)
+(39.0, 4.0666460153820206e-5)
+(40.0, 3.906117990155142e-5)
+};
+\addlegendentry{Output ($y$)}
+\end{axis}
+
+\end{tikzpicture}
+\end{document}

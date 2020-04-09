@@ -44,7 +44,7 @@ end
  
 function Solve_RI_Dynamics(ω,β,A,Q,H;Ω0=H*H',Σ0=A*A'+Q*Q')
     tol_err = 1e-8       # tolerance level
-    w       = 0.1        # update weight
+    w       = 1        # update weight
     maxit   = 10000
 
     Ω_c = H*H'
