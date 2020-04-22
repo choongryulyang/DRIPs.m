@@ -42,12 +42,13 @@ end
 # Σ_z    : Covariance matrix of the rational inattention error
 # K      : Kalman gain matrix
 
-function solve_drip(ω,β,A,Q,H;           # primitives of the D.R.I.P.
-                    Ω0      = H*H',      # optional: initial guess for steady state information matrix
-                    Σ0      = A*A'+Q*Q', # optional: initial guess for steady state prior
-                    w       = 1,         # optional: updating weight in iteration
-                    tol_err = 1e-6,      # optional: tolerance level for convergence
-                    maxit   = 10000)     # optional: maximum number of iterations
+function solve_drip(ω,β,A,Q,H;              # primitives of the D.R.I.P.
+                    fcap::Bool = false,     # optional: if true then solves the problem with fixed capacity κ = ω.
+                    Ω0         = H*H',      # optional: initial guess for steady state information matrix
+                    Σ0         = A*A'+Q*Q', # optional: initial guess for steady state prior
+                    w          = 1,         # optional: updating weight in iteration
+                    tol_err    = 1e-4,      # optional: tolerance level for convergence
+                    maxit      = 10000)     # optional: maximum number of iterations
 
     ## initialize
     (n,m) = length(size(H)) == 2 ? size(H) : (size(H,1),1);  
@@ -60,16 +61,17 @@ function solve_drip(ω,β,A,Q,H;           # primitives of the D.R.I.P.
     Σ1    = Matrix{Float64}(I,n,n)
     Σ_p   = Matrix{Float64}(I,n,n)
     Λ     = Matrix{Float64}(I,n,n)
-
+    κ     = ω
     # iterate 
     while (err > tol_err) & (iter < maxit)
         D, U    = eigen(SqRΣ*Ω0*SqRΣ);
-        D       = getreal(D);
+        D       = diagm(getreal(D));
         U       = getreal(U);
-        D       = diagm(abs.(D).>1e-10).*diagm(D) + (diagm(abs.(D).<= 1e-10))*1e-8;
-
-
-        Λ       = U*max.(ω*eye - D,0.0)*U';
+        
+        if fcap == true 
+            ω = (2^(2*κ)/det(max.(ω*eye,D)))^(-1/n);
+        end
+        Λ       = U*(max.(ω*eye-D,0.0))*U';
         Σ_p     = getreal(ω*SqRΣ*U/(max.(D,ω*eye))*U'*SqRΣ);
 
         Σ1      = A*Σ_p*A' + Q*Q'
@@ -81,9 +83,7 @@ function solve_drip(ω,β,A,Q,H;           # primitives of the D.R.I.P.
         invSqRΣ = pinv(SqRΣ);
 
         Ω0      = w*(Ω_c + β*A'*invSqRΣ*(ω*eye - Λ)*invSqRΣ*A)+(1-w)*Ω0;
-
-        SqRΣ    = (abs.(SqRΣ).>1e-10).*SqRΣ + diagm(abs.(diag(SqRΣ)).<= 1e-10)*1e-8;
-        Ω0      = (abs.(Ω0).>1e-10).*Ω0     + diagm(abs.(diag(Ω0)).<= 1e-10)*1e-8;
+        Ω0      = (abs.(Ω0).>1e-10).*Ω0;
 
         iter   += 1
     end
@@ -106,7 +106,7 @@ end
 function solve_trip(P::drip,         # D.R.I.P.
                     Σ0;              # initial prior matrix
                     T     = 100,     # optional: time until convergence to steady state
-                    tol   = 1e-6,    # optional: tolerance for convergence
+                    tol   = 1e-4,    # optional: tolerance for convergence
                     maxit = 1000     # optional: max iterations
                     )
     ## Initialize 
@@ -155,11 +155,11 @@ end
 ########## Aux. Functions ############
 
 function getreal(M)
-    if maximum(abs.(imag.(M))) < 1e-10
+    #if maximum(abs.(imag.(M))) < 1e-10
         return(real.(M))
-    else
-        print("Your matrix has complex elements")
-    end
+    #else
+    #    print("Your matrix has complex elements")
+    #end
 end
 
 function infinitesum(func; tol = 1e-8,maxit = 1000,start=0)
@@ -173,6 +173,21 @@ function infinitesum(func; tol = 1e-8,maxit = 1000,start=0)
         it += 1
     end
     return(infsum)
+end
+
+## calculate the amount of information acquired in bits/nats for a drip 
+function capacity(P::drip;      # drip structure
+                  unit = "bit"  # optional: unit of capacity (bit or nat). 
+                  )
+    if unit == "bit"
+        κ = 0.5*log(det(P.Σ_1)/det(P.Σ_p))/log(2); #returns capacity in bits
+    elseif unit == "nat" 
+        κ = 0.5*log(det(P.Σ_1)/det(P.Σ_p));        #returns capacity in nats 
+    else 
+        println("Invalid input for unit! Capacity is reported in bits.")
+        κ = 0.5*log(det(P.Σ_1)/det(P.Σ_p))/log(2);
+    end
+    return(κ)
 end
 
 function dripirfs(P::drip,T::Int)
