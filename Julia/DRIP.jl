@@ -7,14 +7,16 @@ using LinearAlgebra
 
 ## A General Structure for D.R.I.P.
 struct drip 
-    ω; β; A; Q; H;          # primitives
-    K; Y; Σ_z; Σ_p; Σ_1; Ω; # solution
+    ω; β; A; Q; H;                    # primitives
+    K; Y; Σ_z; Σ_p; Σ_1; Ω;           # solution
 end
 
 ## A General Structure for Transition dynamics of Rational Inattention Problems (T.R.I.P.)
 struct trip 
     P::drip;                # problem and solution in steady state
-    Ωs;Σs;Ds;               # transition path for benefit matrices, 
+    T::Int;                 # length of T.R.I.P.
+    Σ_1s; Σ_ps; Ωs;         # priors, posteriors and benefit matrices 
+    Ds;                     # eigenvalues and eigenvectors of Σ_t^(0.5)Ω_tΣ_t^(0.5)
 end 
 
 ## A Structure for the impulse responses of D.R.I.P. for the steady state posterior
@@ -47,7 +49,7 @@ function solve_drip(ω,β,A,Q,H;              # primitives of the D.R.I.P.
                     Ω0         = H*H',      # optional: initial guess for steady state information matrix
                     Σ0         = A*A'+Q*Q', # optional: initial guess for steady state prior
                     w          = 1,         # optional: updating weight in iteration
-                    tol_err    = 1e-4,      # optional: tolerance level for convergence
+                    tol        = 1e-4,      # optional: tolerance level for convergence
                     maxit      = 10000)     # optional: maximum number of iterations
 
     ## initialize
@@ -63,7 +65,7 @@ function solve_drip(ω,β,A,Q,H;              # primitives of the D.R.I.P.
     Λ     = Matrix{Float64}(I,n,n)
     κ     = ω
     # iterate 
-    while (err > tol_err) & (iter < maxit)
+    while (err > tol) & (iter < maxit)
         D, U    = eigen(SqRΣ*Ω0*SqRΣ);
         D       = diagm(getreal(D));
         U       = getreal(U);
@@ -113,56 +115,65 @@ function solve_trip(P::drip,         # D.R.I.P.
     Ωs  = repeat(P.Ω, inner = [1,1,T]);
     Ωsp = Ωs;
 
-    Σs  = repeat(P.Σ_1, inner = [1,1,T]); Σs[:,:,1] = Σ0;
-    Σsp = Σs;
+    Σ_1s  = repeat(P.Σ_1, inner = [1,1,T]); Σ_1s[:,:,1] = Σ0;
+    Σ_1sp = Σ_1s;
     (n,m) = length(size(P.H)) == 2 ? size(P.H) : (size(H,1),1);  
     # n: dimension of state, m: number of actions
 
-    Ds  = zeros(n,T);
+    Σ_ps= repeat(P.Σ_p, inner = [1,1,T]); # initialize posteriors
+    Ds  = zeros(n,T);                          # initialize eigenvalues 
 
     iter = 0;
     err  = 1;
     eye  = Matrix(I,n,n);
-
     while (err > tol) & (iter <= maxit)
         ## Given Ωs, find Sigmas using the law of motion for priors 
         for i in 1:1:T-1
-            SqSigma      = sqrt(Σs[:,:,i]);
-            D, U         = eigen(SqSigma*Ωs[:,:,i]*SqSigma);
-            Ds[:,i]      = getreal(D);
-            U            = getreal(U);
-            D            = diagm(Ds[:,i]);
-            Σsp[:,:,i+1] = P.Q*P.Q'+P.ω*P.A*SqSigma*U*pinv(max.(D,P.ω*eye))*U'*SqSigma*P.A';
+            SqSigma        = real.(sqrt(Σ_1s[:,:,i]));
+            D, U           = eigen(SqSigma*Ωs[:,:,i]*SqSigma);
+            Ds[:,i]        = real.(D);
+            U              = real.(U);
+            D              = diagm(Ds[:,i]);
+            Σ_ps[:,:,i]    = P.ω*SqSigma*U/(max.(D,P.ω*eye))*U'*SqSigma;
+            Σ_1sp[:,:,i+1] = P.Q*P.Q'+P.A*Σ_ps[:,:,i]*P.A';
         end
-        # Given Σs, Find Omegas using the Euler equation
+        # Given Σ_1s, Find Omegas using the Euler equation
         for i = T-1:-1:1
-            SqSigma      = sqrt(Σs[:,:,i+1]);
-            invSqSigma   = getreal(pinv(SqSigma));
+            SqSigma      = sqrt(Σ_1sp[:,:,i+1]);
+            invSqSigma   = real.(pinv(SqSigma));
             D, U         = eigen(SqSigma*Ωs[:,:,i+1]*SqSigma);
             D            = diagm(getreal(D));
-            U            = getreal(U);
+            U            = real.(U);
             Ωsp[:,:,i]   = P.H*P.H'+P.β*P.A'*invSqSigma*U*min.(D,P.ω*eye)*U'*invSqSigma*P.A;
         end
-        err = 0.5*norm(Σsp-Σs,2)/norm(Σs,2);#+0.5*norm(Ωsp-Ωs,2)/norm(Ωs);
-        Σs  = getreal(Σsp);
-        Ωs  = getreal(Ωsp);
-        iter += 1;
+        err    = norm(Σ_1sp-Σ_1s)/norm(Σ_1s);
+        Σ_1s   = real.(Σ_1sp);
+        Ωs     = real.(Ωsp);
+        iter  += 1;
     end
-
-    return(trip(P,Ωs,Σs,Ds))
+    # Throw error if T was too short for convergence to steady state
+    con_err = norm(P.Q*P.Q'+P.A*Σ_ps[:,:,end-1]*P.A'-P.Σ_1)/norm(P.Σ_1);
+    if (con_err  > tol)
+        error("T was too short for convergence. Try larger T.");
+    end 
+    # Finally, store the eigenvalues of steady state
+    SqSigma      = real.(sqrt(Σ_1s[:,:,end]));
+    D, U         = eigen(SqSigma*Ωs[:,:,end]*SqSigma);
+    Ds[:,end]    = real.(D);
+    # return the trip structure 
+    return(trip(P,T,Σ_1s,Σ_ps,Ωs,Ds))
 end
 
 ########## Aux. Functions ############
 
 function getreal(M)
-    #if maximum(abs.(imag.(M))) < 1e-10
-        return(real.(M))
-    #else
-    #    print("Your matrix has complex elements")
+    #if maximum(abs.(imag.(M))) > 1e-6
+    #    print("Warning: Matrix decomposition returned complex numbers larger than 1e-6")
     #end
+    return(real.(M))
 end
 
-function infinitesum(func; tol = 1e-8,maxit = 1000,start=0)
+function infinitesum(func; tol = 1e-6,maxit = 1000,start=0)
     diff  = 1.0
     infsum = func(start)
     it    = start + 1
@@ -207,6 +218,31 @@ function dripirfs(P::drip,T::Int)
                 x_hat[:,kk,ii] =P.A*x_hat[:,kk,ii-1]+(P.K*P.Y')*(x[:,kk,ii]-P.A*x_hat[:,kk,ii-1]);
             end
             a[:,kk,ii]  .= P.H'*x_hat[:,kk,ii];
+        end
+    end
+    return(dripirfs(T,x,x_hat,a))
+end
+
+function dripirfs(Pt::trip,T::Int)
+    Ss    = Pt.P; # steady state drip
+    (n,m) = length(size(Ss.H)) == 2 ? size(Ss.H) : (size(Ss.H,1),1) # dimensions of state and actions
+    (_,k) = length(size(Ss.Q)) == 2 ? size(Ss.Q) : (size(Ss.Q,1),1) # number of structural shocks
+    eye   = Matrix(I,n,n);
+
+    x     = zeros(n,k,T); # initialize IRFs of state 
+    x_hat = zeros(n,k,T); # initialize IRFs of beliefs 
+    a     = zeros(m,k,T); # initialize IRFs of actions
+    for kk in 1:k
+        e_k = zeros(k,1); e_k[kk] = 1;
+        for ii in 1:T
+            if ii==1 
+                x[:,kk,ii]     = Ss.Q*e_k;
+                x_hat[:,kk,ii] = (eye-Pt.Σ_ps[:,:,ii]*pinv(Pt.Σ_1s[:,:,ii]))*(x[:,kk,ii]);
+            else 
+                x[:,kk,ii]     =Ss.A*x[:,kk,ii-1];
+                x_hat[:,kk,ii] =Ss.A*x_hat[:,kk,ii-1]+(eye-Pt.Σ_ps[:,:,ii]*pinv(Pt.Σ_1s[:,:,ii]))*(x[:,kk,ii]-Ss.A*x_hat[:,kk,ii-1]);
+            end
+            a[:,kk,ii]  .= Ss.H'*x_hat[:,kk,ii];
         end
     end
     return(dripirfs(T,x,x_hat,a))
