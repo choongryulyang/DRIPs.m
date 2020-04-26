@@ -62,9 +62,9 @@ function [Sigma1,Sigma_p,Lambda,Omega0,Y,Sigma_z,K] = ...
         
         Omega0      = Omega_c + beta*A'*invSqRSigma*(omega*I - Lambda) ... 
 					  *invSqRSigma*A   ;
-
+        
         SqRSigma = (abs(SqRSigma)>1e-10).*SqRSigma ;
-        Omega0 = (abs(Omega0)>1e-10).*Omega0 ;
+        Omega0   = (abs(Omega0)>1e-10).*Omega0 ;
 
         iter        = iter + 1;
     end
