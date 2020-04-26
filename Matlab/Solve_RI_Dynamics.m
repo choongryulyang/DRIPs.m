@@ -1,4 +1,6 @@
 %% Afrouzi and Yang (2019)
+%% This code solves for the steady state of the dynamic 
+%% multivariate rational inattention problem in LQG setting.
 
 %% Inputs
 % omega     : Cost of information
