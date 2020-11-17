@@ -43,69 +43,75 @@
 
 
 
-function sol = Drip(omega,beta,A,Q,H,varargin) 
+function p = Drip(omega,beta,A,Q,H,varargin) 
 
     % parse optional inputs 
     
-    p = inputParser;
-    addOptional(p,'initOmega',H*H');
-    addOptional(p,'initSigma',A*A'+Q*Q');
-    addOptional(p,'tol',1e-4);
-    addOptional(p,'fcap',false,@islogical);
-    addOptional(p,'w',1);
-    addOptional(p,'maxit',10000);
+    args = inputParser;
+    addOptional(args,'initOmega',H*H');
+    addOptional(args,'initSigma',A*A'+Q*Q');
+    addOptional(args,'tol',1e-4);
+    addOptional(args,'fcap',false,@islogical);
+    addOptional(args,'w',1);
+    addOptional(args,'maxit',10000);
 
-    parse(p,varargin{:});
+    parse(args,varargin{:});
 
     % initialize 
 
     [n,~]     = size(H)   ;
     I         = eye(n)    ;
-    sol.err   = 1 ;
+    p.ss.err   = 1 ;
     iter      = 0 ;
-    Sigma0    = p.Results.initSigma ;
-    sol.Omega = p.Results.initOmega ;
+    Sigma0    = args.Results.initSigma ;
+    p.ss.Omega = args.Results.initOmega ;
     SqRSigma  = sqrtm(Sigma0);
     Omega_c   = H*H'      ;
 
-    if p.Results.fcap == true 
+    if args.Results.fcap == true 
         kappa     = omega ;
     end 	
     
     % Loop
-    while sol.err > p.Results.tol
+    while (p.ss.err > args.Results.tol) && (iter <= args.Results.maxit)
 		
-		S_Om_S  = SqRSigma*sol.Omega*SqRSigma ;
+		S_Om_S  = SqRSigma*p.ss.Omega*SqRSigma ;
         [U,D] = eig(S_Om_S) ;
         D = real(D);
         U = real(U);
 
-        if p.Results.fcap == true
+        if args.Results.fcap == true
             omega = (2^(2*kappa)/det(max(D,omega*I)))^(-1/n);
         end
         
-        sol.Sigma_p = omega*SqRSigma*U/(max(D,omega*I))*U'*SqRSigma;
+        p.ss.Sigma_p = omega*SqRSigma*U/(max(D,omega*I))*U'*SqRSigma;
     
-        sol.Sigma_1 = A*sol.Sigma_p*A' + Q*Q' ;
-        sol.err     = norm(sol.Sigma_1 - Sigma0)/norm(Sigma0);
+        p.ss.Sigma_1 = A*p.ss.Sigma_p*A' + Q*Q' ;
+        p.ss.err     = norm(p.ss.Sigma_1 - Sigma0)/norm(Sigma0);
 
-        Sigma0      = p.Results.w*sol.Sigma_1 + (1-p.Results.w)*Sigma0 ;
+        Sigma0      = args.Results.w*p.ss.Sigma_1 + (1-args.Results.w)*Sigma0 ;
         
         SqRSigma    = real(sqrtm(Sigma0));
         invSqRSigma = real(pinv(SqRSigma));
         
-        sol.Omega   = p.Results.w ...
+        p.ss.Omega   = args.Results.w ...
                         *(Omega_c + beta*A'*invSqRSigma*U*(min(D,omega*I))*U'*invSqRSigma*A) ...
-                        +(1-p.Results.w)*sol.Omega;
+                        +(1-args.Results.w)*p.ss.Omega;
 
-        sol.Omega = (abs(sol.Omega)>1e-10).*sol.Omega ;
+        p.ss.Omega = (abs(p.ss.Omega)>1e-10).*p.ss.Omega ;
 
         iter        = iter + 1;
     end
    
-    inv_Sigma1  = pinv(sol.Sigma_1) ;
-    sol.Y       = (I - sol.Sigma_p*inv_Sigma1)'*H ;
-    sol.Sigma_z = H'*(sol.Sigma_p - sol.Sigma_p*inv_Sigma1*sol.Sigma_p)*H ;
-    sol.K       = sol.Sigma_1*sol.Y*pinv(sol.Y'*sol.Sigma_1*sol.Y + sol.Sigma_z) ;
+    inv_Sigma1  = pinv(p.ss.Sigma_1) ;
+    p.ss.Y       = (I - p.ss.Sigma_p*inv_Sigma1)'*H ;
+    p.ss.Sigma_z = H'*(p.ss.Sigma_p - p.ss.Sigma_p*inv_Sigma1*p.ss.Sigma_p)*H ;
+    p.ss.K       = p.ss.Sigma_1*p.ss.Y*pinv(p.ss.Y'*p.ss.Sigma_1*p.ss.Y + p.ss.Sigma_z) ;
     
+    % store the primitives of the problem
+    p.omega = omega;
+    p.beta = beta;
+    p.A = A;
+    p.Q = Q;
+    p.H = H;
 end
