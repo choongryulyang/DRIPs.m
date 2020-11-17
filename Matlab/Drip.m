@@ -1,8 +1,8 @@
 %% Afrouzi and Yang (2019)
 %% This code solves for the steady state of the dynamic 
 %% multivariate rational inattention problem in LQG setting.
-
-%     Drip(ω,β,A,Q,H, kwargs...) -> Drip
+%
+%     Drip(omega,beta,A,Q,H, kwargs...) -> Drip
 %
 % Solves for the steady state of a Dynamic Rational Inattention Problem defined 
 % by the arguments and stores the solution in a Drip type.
@@ -11,8 +11,8 @@
 %% ARGUMENSTS
 %
 % The function takes the primitives of the Drip as arguments:
-%     * ω      : Cost of information
-%     * β      : Discount factor
+%     * omega  : Cost of information
+%     * beta   : Discount factor
 %     * A      : Transition matrix: x=Ax+Qu
 %     * Q      : Std. Dev. matrix: x=Ax+Qu
 %     * H      : Mapping of shocks to actions: v=-0.5(a'-x'H)(a-H'x)
@@ -29,24 +29,22 @@
 %
 %% OUTPUTS
 %  The function returns a structure with the primitives and the solution objects:
-%     * Y       : Weight vector for evolution of actions
-%     * Sigma_z : Covariance matrix of the rational inattention error
-%     * K       : Kalman gain matrix
-%     * Sigma_1 : Steady-state prior covariance matrix under the solution
-%     * Sigma_p : Steady-state posterior covariance matrix under the solution
-%     * Omega   : Dynamic benefit matrix
+%     * ss : a structure with the solution to the steady state of the DRIP with the following fields:
+%           * Y       : Weight vector for evolution of actions
+%           * Sigma_z : Covariance matrix of the rational inattention error
+%           * K       : Kalman gain matrix
+%           * Sigma_1 : Steady-state prior covariance matrix under the solution
+%           * Sigma_p : Steady-state posterior covariance matrix under the solution
+%           * Omega   : Dynamic benefit matrix
+%     * also contains fields for the primitives of the problem (omega,beta,A,Q,H)
 %
 %% EXAMPLE 
-% >> P = Drip(ω,β,A,Q,H)
+% >> p = Drip(omega,beta,A,Q,H)
 % 
-
-
-
 
 function p = Drip(omega,beta,A,Q,H,varargin) 
 
-    % parse optional inputs 
-    
+    % parse optional inputs
     args = inputParser;
     addOptional(args,'initOmega',H*H');
     addOptional(args,'initSigma',A*A'+Q*Q');

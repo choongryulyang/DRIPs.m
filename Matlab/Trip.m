@@ -1,7 +1,7 @@
 %          Trip(p::Drip,Sigma0, kwargs...) -> Trip
 %
 %     Solves for the transition dynamics of the optimal information structure starting
-%     from the initial prior distribution with covariance matrix `Σ0`.
+%     from the initial prior distribution with covariance matrix `Sigma0`.
 %     See [Afrouzi and  Yang (2019)](http://afrouzi.com/dynamic_inattention.pdf)
 %     for details.
 %
@@ -15,16 +15,17 @@
 %     * maxit = 1000 : max iterations
 %
 %% OUTPUTS
-%     Returns a `Trip` structure with the transition path of
+%     Returns a structure with the following fields for the transition path of
 %     the optimal information structure:
 %
 %     Sigma_1s : sequence of prior covariance matrices
 %     Sigma_ps : sequence of posterior covariance matrices
 %     Omegas   : sequence of information benefit matrices
-%     Ds       : eigenvalues of Σ_t^(0.5)Ω_tΣ_t^(0.5) over time (marginal values of information)
+%     Ds       : eigenvalues of Sigma_t^(0.5)Omega_tSigma_t^(0.5) over time (marginal values of information)
 %     err      : convergence err
+%     Also stores the input p in the output structure 
 % 
-% EXAMPLE
+%% EXAMPLE
 % >> p = solve_drip(ω,β,A,Q,H)
 % >> Sigma0 = 0.1*p.Sigma_1;
 % >> pt = Trip(p,Sigma0);
@@ -32,7 +33,6 @@
 function sol = Trip(p,Sigma0,varargin) 
 
     % parse optional inputs 
-    
     args = inputParser;
     addOptional(args,'T',100);
     addOptional(args,'tol',1e-4);
@@ -65,7 +65,7 @@ function sol = Trip(p,Sigma0,varargin)
         [U, D]  = eig(SqSigma*Omegas0(:,:,i)*SqSigma);
         U       = real(U);
         D       = real(D);
-        sol.Ds(:,i)           = diag(D);
+        sol.Ds(:,i)           = sort(diag(D));
         sol.Sigma_ps(:,:,i)   = p.omega*SqSigma*U/(max(D,p.omega*I))*U'*SqSigma;
         sol.Sigma_1s(:,:,i+1) = p.Q*p.Q' + p.A*sol.Sigma_ps(:,:,i)*p.A';
       end
@@ -84,11 +84,14 @@ function sol = Trip(p,Sigma0,varargin)
       Omegas0 = real(sol.Omegas);
       iter = iter + 1;
     end
-    con_err = norm(p.Q*p.Q' + p.A*sol.Sigma_ps(:,:,end-1)*p.A'-p.ss.Sigma_1)/norm(p.ss.Sigma_1);
-    if (con_err  > args.Results.tol)
-        error('The Prior covariance matrix did not converge to steady state. Try larger T.');
-    end
+%     con_err = norm(p.Q*p.Q' + p.A*sol.Sigma_ps(:,:,end-1)*p.A'-p.ss.Sigma_1)/norm(p.ss.Sigma_1);
+%     if (con_err  > args.Results.tol)
+%         error('The Prior covariance matrix did not converge to steady state. Try larger T.');
+%     end
     SqSigma       = real(sqrtm(sol.Sigma_1s(:,:,end)));
     [~, D]        = eig(SqSigma*sol.Omegas(:,:,end)*SqSigma);
-    sol.Ds(:,end) = diag(real(D));
+    sol.Ds(:,end) = sort(diag(real(D)));
+
+    % store the Drip in sol
+    sol.p         = p;
   end 
