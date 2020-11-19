@@ -23,7 +23,7 @@
 %     Omegas   : sequence of information benefit matrices
 %     Ds       : eigenvalues of Sigma_t^(0.5)Omega_tSigma_t^(0.5) over time (marginal values of information)
 %     err      : convergence err
-%     Also stores the input p in the output structure 
+%     con_err  : distance of Sigma_T from steady state prior
 % 
 %% EXAMPLE
 % >> p = solve_drip(ω,β,A,Q,H)
@@ -84,14 +84,9 @@ function sol = Trip(p,Sigma0,varargin)
       Omegas0 = real(sol.Omegas);
       iter = iter + 1;
     end
-%     con_err = norm(p.Q*p.Q' + p.A*sol.Sigma_ps(:,:,end-1)*p.A'-p.ss.Sigma_1)/norm(p.ss.Sigma_1);
-%     if (con_err  > args.Results.tol)
-%         error('The Prior covariance matrix did not converge to steady state. Try larger T.');
-%     end
+    sol.con_err = norm(p.Q*p.Q' + p.A*sol.Sigma_ps(:,:,end-1)*p.A'-p.ss.Sigma_1)/norm(p.ss.Sigma_1);
     SqSigma       = real(sqrtm(sol.Sigma_1s(:,:,end)));
     [~, D]        = eig(SqSigma*sol.Omegas(:,:,end)*SqSigma);
     sol.Ds(:,end) = sort(diag(real(D)));
 
-    % store the Drip in sol
-    sol.p         = p;
   end 
