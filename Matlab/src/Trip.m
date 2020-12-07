@@ -1,4 +1,4 @@
-%          Trip(p::Drip,Sigma0, kwargs...) -> Trip
+%     Trip(p::Drip,Sigma0, kwargs...) -> Trip
 %
 %     Solves for the transition dynamics of the optimal information structure starting
 %     from the initial prior distribution with covariance matrix `Sigma0`.
@@ -26,7 +26,7 @@
 %     con_err  : distance of Sigma_T from steady state prior
 % 
 %% EXAMPLE
-% >> p = solve_drip(ω,β,A,Q,H)
+% >> p = Drip(ω,β,A,Q,H)
 % >> Sigma0 = 0.1*p.Sigma_1;
 % >> pt = Trip(p,Sigma0);
 

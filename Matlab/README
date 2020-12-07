@@ -1,0 +1,23 @@
+This folder contains the Matlab version of Afrouzi and Yang (2020)'s Julia software package for solving transition dynamics of Dynamic Rational Inattention Problems (DRIPs).
+
+There are three main functions in the `src` folder (Drip.m, Trip.m and irfs.m). Moreover, in `examples` folder, we have included some examples, including a pricing problem with no feedback and extension of Sims (2010) and its transition dynamics. 
+
+Description of source files:
+* Drip.m 
+    This function defines a DRIP given inputs from the user. The function returns a structure that stores the primitives of the problem as well as the steady state information structure. Every DRIP should be defined through this function before transition dynamics can be solved. See the documentation within the `Drip.m` file for details on inputs and output objects.
+
+* Trip.m 
+    This function characterizes the transition dynamics of a DRIP. Its inputs are (1) a `p` structure that is the output of `Drip.m`, and an initial prior covariance matrix that specifies the initial condition. See the documentation within the `Trip.m` file for details on inputs and output objects.
+
+* irfs.m
+    Given the information structure from a Drip or a Trip, this function returns the impulse response functions of actions and beliefs to structural shocks. See the documentation within the `irfs.m` file for details on inputs and output objects.
+
+
+Description of example files:
+* ex1_pricing_wo_feedback.m 
+    Solves a pricing problem with no strategic complementarity
+
+* ex2_sims2010.m
+    Solves the example from Sims (2010) and provides solution and irfs under transition dynamics based the extension in Afrouzi and Yang (2020).
+
+

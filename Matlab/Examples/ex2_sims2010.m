@@ -1,13 +1,15 @@
 %% Example: Sims 2010
+% This code solves for the Sims 2010 and its extesion in Afrouzi and Yang
+% (2020)
 clear;
 addpath('../src');
 %% parameters 
-% DRIP parameters
-omega   = 1;
-beta    = 0.9;
-A       = [0.95 0; 0 0.4];
-Q       = sqrt([0.0975 0; 0 0.86]);
-H       = [1; 1];
+    % DRIP parameters
+    omega = 1;
+    beta  = 0.9;
+    A     = [0.95 0; 0 0.4];
+    Q     = sqrt([0.0975 0; 0 0.86]);
+    H     = [1; 1];
 
 %% Solution and Performance for Benchmark Parameterization
     % Solve and display the optimal posterior covariance matrix:
@@ -36,7 +38,7 @@ H       = [1; 1];
     box on;
     grid on;
     xlim([1,15])
-    title('Marginal Value of Information on The Transition Path', ...
+    title('Marginal Value of Information on the Transition Path', ...
         'interpreter','latex','fontsize',12);
     plot(1:15,bp.tr.Ds(1,1:15), ...
         'LineWidth',3,'Color','b')

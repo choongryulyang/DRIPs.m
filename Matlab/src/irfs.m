@@ -1,5 +1,6 @@
 %% Afrouzi and Yang (2019)
-% This code returns the irfs of the a Drip 
+% This code returns the irfs of a Drip either with the steady state
+% information structure or in the transition path if specified.
 %
 %% SYNTAX
 %    irfs(p, kwargs...) -> Path
@@ -11,7 +12,36 @@
 %   trip   = none  : irfs under the specified transition path as the output of Trip.m function
 %                    if no transition path is specified, returns irfs under the steady state 
 %                    information structure by default.
-%   length = 40    : length of irfs 
+%   length = 40    : length of irfs
+%
+%% OUTPUTS
+%   returns a structure `out` that contains the following fields:
+%   out.x    : this is the impulse responses of x itself to structural
+%              shocks and has dimensions n*k*T where `n` is the dimension
+%              of x, `k` is the numnber of structural shocks and `T` is the
+%              length of irfs.
+%   out.x_hat: this is the impulse responses of beliefs to shocks and has 
+%              dimension n*k*T where `n` is the dimension of the state
+%              vector x, `k` is the number of structural shocks, and `T` is
+%              the length of irfs. 
+%   out.a    : this is the impulse respnses of actions to shocks and has
+%              dimension m*k*T where `m` is the number of actions, `k` is
+%              the number of structural shocks and `T` is the length of
+%              irfs. For instance a(i,j,:) is the irf of i'th action to
+%              j'th structural shock.
+% 
+%% EXAMPLES:
+%  % irfs with the steady state information structure
+%       >> p     = Drip(omega,beta,A,Q,H) % solve a Drip
+%       >> pirfs = irfs(p) 
+%   
+%  % irfs with the transition dynamics in information structure
+%       >> p_trip = Trip(p,Sigma0) % solve for a transition path given Sigma0
+%       >> pirfs = irfs(p,'trip',p_trip)
+%
+%  % adjusting the length of irfs 
+%       >> pirfs = irfs(p,'length',20) % returns irfs for 20 periods 
+%                                      % (default is 40)
 
 function out = irfs(p,varargin)
     args = inputParser; 
@@ -57,12 +87,12 @@ function out = irfs(p,varargin)
     function out = tripirfs(p,pt,length) 
         %initialize
         out.T     = length;
-        L          = size(pt.Ds,2);
+        L         = size(pt.Ds,2);
         
         out.x     = zeros(n,k,out.T);
         out.x_hat = out.x;
         out.a     = zeros(m,k,out.T);
-        In         = eye(n);
+        In        = eye(n);
 
         for kk = 1:1:k
             e_k = Ik(:,kk);
