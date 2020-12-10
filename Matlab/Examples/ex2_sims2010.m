@@ -8,7 +8,7 @@ addpath('../src');
     omega = 1;
     beta  = 0.9;
     A     = [0.95 0; 0 0.4];
-    Q     = sqrt([0.0975 0; 0 0.86]);
+    Q     = sqrt([0.0975 0; 0 0.84]);
     H     = [1; 1];
 
 %% Solution and Performance for Benchmark Parameterization
@@ -44,7 +44,7 @@ addpath('../src');
         'LineWidth',3,'Color','b')
     plot(1:15,bp.tr.Ds(2,1:15), ...
         'LineWidth',3,'Color','r')
-    plot(1:15,ones(1,15),'--k','LineWidth',2)
+    plot(1:15,bp.omega*ones(1,15),'--k','LineWidth',2)
     legend({'High eigenvalue ($d_1$)','Low eigenvalue ($d_2$)', ...
         'Marginal cost ($\omega$)'}, ...
         'interpreter','latex','fontsize',10,'location','east')
