@@ -71,13 +71,13 @@ function p = Drip(omega,beta,A,Q,H,varargin)
     % if the user wants solution with fixed capacity, set kappa = omega
     if args.Results.fcap == true 
         kappa     = omega ;
-    end 	
+    end     
     
     % Loop (stop if converged or iteration reached maxit)
     while (p.ss.err > args.Results.tol) && (iter <= args.Results.maxit)
-		
+        
         % get the eigenvalue and eigen vectors of SqSigma*Omega*SqSigma
-		X     = SqRSigma*p.ss.Omega*SqRSigma ;
+        X     = SqRSigma*p.ss.Omega*SqRSigma ;
         [U,D] = eig(X) ;
         D = real(D);
         U = real(U);
@@ -91,21 +91,23 @@ function p = Drip(omega,beta,A,Q,H,varargin)
         % use the policy function in Afrouzi and Yang to get the implied
         % posterior covariance:
         p.ss.Sigma_p = omega*SqRSigma*U/(max(D,omega*I))*U'*SqRSigma;
-    
+        
         % get the new guess for prior covariance and calculate the
         % convergence error:
         p.ss.Sigma_1 = A*p.ss.Sigma_p*A' + Q*Q' ;
-        p.ss.err     = norm(p.ss.Sigma_1 - Sigma0)/norm(Sigma0);
-
-        % update the guess for prior covariance given update weight w
-        Sigma0      = args.Results.w*p.ss.Sigma_1 + (1-args.Results.w)*Sigma0 ;
         
         % use the Euler equation in Afrouzi and Yang to update guess for
         % Omega given update weight w:
         SqRSigma    = real(sqrtm(Sigma0));
         invSqRSigma = real(pinv(SqRSigma));
-        p.ss.Omega   = args.Results.w ...
-                        *(Omega_c + beta*A'*invSqRSigma*U*(min(D,omega*I))*U'*invSqRSigma*A) ...
+        Omega0      = Omega_c + beta*A'*invSqRSigma*U*(min(D,omega*I))*U'*invSqRSigma*A;
+        
+        p.ss.err     = norm(p.ss.Sigma_1 - Sigma0)/norm(Sigma0) ...
+                     + norm(p.ss.Omega - Omega0)/norm(Omega0);
+        
+        % update the guesses
+        Sigma0      = args.Results.w*p.ss.Sigma_1 + (1-args.Results.w)*Sigma0 ;
+        p.ss.Omega   = args.Results.w*(Omega0) ...
                         +(1-args.Results.w)*p.ss.Omega;
         p.ss.Omega = (abs(p.ss.Omega)>1e-10).*p.ss.Omega ;
 
