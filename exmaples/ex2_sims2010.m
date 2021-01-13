@@ -4,12 +4,12 @@
 clear;
 addpath('../src');
 %% parameters 
-    % DRIP parameters
-    omega = 1;
-    beta  = 0.9;
-    A     = [0.95 0; 0 0.4];
-    Q     = sqrt([0.0975 0; 0 0.84]);
-    H     = [1; 1];
+% DRIP parameters
+omega   = 1;
+beta    = 0.9;
+A       = [0.95 0; 0 0.4];
+Q       = sqrt([0.0975 0; 0 0.86]);
+H       = [1; 1];
 
 %% Solution and Performance for Benchmark Parameterization
     % Solve and display the optimal posterior covariance matrix:
@@ -38,7 +38,7 @@ addpath('../src');
     box on;
     grid on;
     xlim([1,15])
-    title('Marginal Value of Information on the Transition Path', ...
+    title('Marginal Value of Information on The Transition Path', ...
         'interpreter','latex','fontsize',12);
     plot(1:15,bp.tr.Ds(1,1:15), ...
         'LineWidth',3,'Color','b')
