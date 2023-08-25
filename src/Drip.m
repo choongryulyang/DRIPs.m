@@ -151,6 +151,7 @@ function p = Drip(omega,beta,A,Q,H,varargin)
     p.ss.Y       = (I - p.ss.Sigma_p*inv_Sigma1)'*H ;
     p.ss.Sigma_z = H'*(p.ss.Sigma_p - p.ss.Sigma_p*inv_Sigma1*p.ss.Sigma_p)*H ;
     p.ss.K       = p.ss.Sigma_1*p.ss.Y*pinv(p.ss.Y'*p.ss.Sigma_1*p.ss.Y + p.ss.Sigma_z) ;
+    p.ss.D       = diag(D); % marignal values of information for each signal 
     
     % store the primitives of the problem
     p.omega = omega;
